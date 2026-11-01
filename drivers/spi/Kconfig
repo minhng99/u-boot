@@ -20,6 +20,14 @@ menuconfig SPI
 
 if SPI
 
+config SPI_RTD1296
+	bool "RTD1296 serial flash controller"
+	depends on DM_SPI && ARCH_REALTEK
+	select SPI_MEM
+	select SYSCON
+	help
+	  Access serial NOR through the RTD1296 command and memory apertures.
+
 config DM_SPI
 	bool "Enable Driver Model for SPI drivers"
 	depends on DM

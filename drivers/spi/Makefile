@@ -6,6 +6,7 @@
 # There are many options which enable SPI, so make this library available
 ifdef CONFIG_$(PHASE_)DM_SPI
 obj-y += spi-uclass.o
+obj-$(CONFIG_SPI_RTD1296) += rtd1296-sfc.o
 obj-$(CONFIG_CADENCE_QSPI) += cadence_qspi.o cadence_qspi_apb.o
 obj-$(CONFIG_CADENCE_OSPI_VERSAL) += cadence_ospi_versal.o
 obj-$(CONFIG_CADENCE_XSPI) += cadence_xspi.o
