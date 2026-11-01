@@ -21,6 +21,7 @@
 		usb1 = &typec_host;
 		usb2 = &usb2_host;
 		usb3 = &usb3_host;
+		watchdog0 = &wdt;
 	};
 
 	chosen {
@@ -319,6 +320,9 @@
 	status = "okay";
 };
 
+&wdt {
+	status = "okay";
+};
 
 &typec {
 	vbus-supply = <&typec_supply>;

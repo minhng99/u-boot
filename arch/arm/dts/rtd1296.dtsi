@@ -58,6 +58,11 @@
 	};
 };
 
+&wdt {
+	compatible = "realtek,rtd1296-watchdog";
+	clocks = <&osc27M>;
+	status = "disabled";
+};
 
 &misc {
 	gpio: gpio@100 {
