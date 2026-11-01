@@ -480,8 +480,12 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 
 	if (data) {
 		ret = dwmci_data_transfer(host, data);
-		if (!host->fifo_mode)
-			ret = dwmci_dma_transfer(host, data->flags, &bbstate);
+		if (!host->fifo_mode) {
+			int dma_ret = dwmci_dma_transfer(host, data->flags, &bbstate);
+
+			if (!ret)
+				ret = dma_ret;
+		}
 	}
 
 	udelay(100);
