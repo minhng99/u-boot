@@ -11,5 +11,6 @@ F:	drivers/clk/clk-rtd1296.c
 F:	drivers/spi/rtd1296-sfc.c
 F:	drivers/net/rtd1296.c
 F:	drivers/mmc/rtd1296-emmc.c
+F:	drivers/mmc/rtd1296-sd.c
 F:	drivers/power/domain/rtd1296-reset-domain.c
 F:	include/configs/bananapi_w2.h

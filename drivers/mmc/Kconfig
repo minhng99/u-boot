@@ -298,6 +298,16 @@ config MMC_DW_RTD1296
 	help
 	  Use the DesignWare core with the RTD1296 clock and pad interface.
 
+config MMC_RTD1296_SD
+	bool "RTD1296 SD card controller"
+	depends on ARCH_REALTEK && DM_MMC
+	select CLK
+	select CLK_RTD1296
+	select DM_REGULATOR
+	select RTD1296_RESET_DOMAIN
+	help
+	  Support the RTD1296 removable SD interface with buffered DMA transfers.
+
 config MMC_DW_CORTINA
 	bool "Cortina specific extensions for Synopsys DW Memory Card Interface"
 	depends on MMC_DW
