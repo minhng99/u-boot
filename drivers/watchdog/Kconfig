@@ -1,5 +1,14 @@
 menu "Watchdog Timer Support"
 
+config WDT_RTD1296
+	bool "RTD1296 watchdog"
+	depends on ARCH_REALTEK
+	select WDT
+	select CLK
+	help
+	  Support the RTD1296 watchdog through the standard start, stop and
+	  reload operations, with the maximum timeout derived from its clock.
+
 config WATCHDOG
 	bool "Enable U-Boot watchdog reset"
 	depends on !HW_WATCHDOG
