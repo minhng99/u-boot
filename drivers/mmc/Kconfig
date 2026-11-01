@@ -288,6 +288,15 @@ config MMC_DW
 	  block, this provides host support for SD and MMC interfaces, in both
 	  PIO, internal DMA mode and external DMA mode.
 
+config MMC_DW_RTD1296
+	bool "RTD1296 DesignWare eMMC controller"
+	depends on ARCH_REALTEK && DM_MMC
+	select MMC_DW
+	select CLK
+	select CLK_RTD1296
+	help
+	  Use the DesignWare core with the RTD1296 clock and pad interface.
+
 config MMC_DW_CORTINA
 	bool "Cortina specific extensions for Synopsys DW Memory Card Interface"
 	depends on MMC_DW
