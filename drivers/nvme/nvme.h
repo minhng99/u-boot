@@ -710,4 +710,7 @@ int nvme_init(struct udevice *udev);
  */
 int nvme_shutdown(struct udevice *udev);
 
+/* Release queues and PRP storage after the controller stops DMA. */
+void nvme_free_resources(struct udevice *udev);
+
 #endif /* __DRIVER_NVME_H__ */

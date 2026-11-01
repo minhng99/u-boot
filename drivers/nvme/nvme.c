@@ -969,3 +969,17 @@ int nvme_shutdown(struct udevice *udev)
 
 	return nvme_disable_ctrl(ndev);
 }
+
+void nvme_free_resources(struct udevice *udev)
+{
+	struct nvme_dev *ndev = dev_get_priv(udev);
+
+	nvme_free_queues(ndev, 0);
+	free(ndev->queues);
+	free(ndev->prp_pool);
+	ndev->queues = NULL;
+	ndev->prp_pool = NULL;
+	ndev->prp_pool_dma = 0;
+	ndev->prp_entry_num = 0;
+	ndev->online_queues = 0;
+}
