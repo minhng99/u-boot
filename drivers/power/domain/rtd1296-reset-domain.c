@@ -43,7 +43,7 @@ static int rtd_domain_pre_remove(void *ctx, struct event *event)
 	    !device_is_compatible(dev, "realtek,rtd1296-reset-domain"))
 		return 0;
 	priv = dev_get_priv(dev);
-	return priv->active ? -EBUSY : 0;
+	return priv->active ? -EPROBE_DEFER : 0;
 }
 
 EVENT_SPY_FULL(EVT_DM_PRE_REMOVE, rtd_domain_pre_remove);
