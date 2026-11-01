@@ -3,6 +3,24 @@
 #
 comment "USB Host Controller Drivers"
 
+config USB_RTD1296
+	bool "RTD1296 USB host controllers"
+	depends on ARCH_REALTEK && DM && OF_CONTROL
+	select USB_XHCI_HCD
+	select USB_EHCI_HCD
+	select USB_DWC3
+	select PHY_RTD1296_USB
+	select CLK_RTD1296
+	select RTD1296_RESET_DOMAIN
+	select DM_REGULATOR
+	select DM_GPIO
+	select MISC
+	select CYCLIC
+	select DM_EVENT
+	help
+	  Enable EHCI and xHCI hosts, their shared reset sequence, and fixed-source
+	  Type-C power and SuperSpeed orientation control on RTD1296.
+
 config USB_HOST
 	bool
 	select DM_USB

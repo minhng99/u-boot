@@ -23,6 +23,7 @@ obj-$(CONFIG_USB_OHCI_GENERIC) += ohci-generic.o
 obj-$(CONFIG_USB_OHCI_NPCM) += ohci-npcm.o
 
 # echi
+obj-$(CONFIG_USB_RTD1296) += ehci-rtd1296.o xhci-rtd1296.o rtd1296-typec.o
 obj-$(CONFIG_USB_EHCI_HCD) += ehci-hcd.o
 obj-$(CONFIG_USB_EHCI_ATMEL) += ehci-atmel.o
 obj-$(CONFIG_USB_EHCI_FSL) += ehci-fsl.o
