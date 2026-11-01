@@ -7,5 +7,6 @@ F:	arch/arm/mach-realtek/
 F:	board/bananapi/bpi-w2/
 F:	configs/bananapi_w2_defconfig
 F:	drivers/gpio/rtd1296-gpio.c
+F:	drivers/clk/clk-rtd1296.c
 F:	drivers/spi/rtd1296-sfc.c
 F:	include/configs/bananapi_w2.h

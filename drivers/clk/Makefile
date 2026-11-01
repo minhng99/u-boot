@@ -5,6 +5,7 @@
 #
 
 obj-$(CONFIG_$(PHASE_)CLK) += clk-uclass.o
+obj-$(CONFIG_CLK_RTD1296) += clk-rtd1296.o
 obj-$(CONFIG_$(PHASE_)CLK) += clk_fixed_rate.o
 obj-$(CONFIG_$(PHASE_)CLK) += clk_fixed_factor.o
 obj-$(CONFIG_$(PHASE_)CLK_CCF) += clk.o clk-divider.o clk-mux.o clk-gate.o

@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
 #include <arm64/realtek/rtd1296.dtsi>
 
+&crt {
+	crt_gates: clock-controller@c {
+		compatible = "realtek,rtd1296-clk-gates";
+		reg = <0xc 8>;
+		#clock-cells = <1>;
+	};
+};
+
 &misc {
 	gpio: gpio@100 {
 		compatible = "realtek,rtd1296-gpio";
@@ -11,6 +19,12 @@
 };
 
 &iso {
+	iso_gates: clock-controller@8c {
+		compatible = "realtek,rtd1296-clk-gates";
+		reg = <0x8c 4>;
+		#clock-cells = <1>;
+	};
+
 	iso_gpio: gpio@100 {
 		compatible = "realtek,rtd1296-iso-gpio";
 		reg = <0x100 0x24>;

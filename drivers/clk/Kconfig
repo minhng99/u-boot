@@ -302,4 +302,10 @@ source "drivers/clk/ti/Kconfig"
 source "drivers/clk/thead/Kconfig"
 source "drivers/clk/uniphier/Kconfig"
 
+config CLK_RTD1296
+	bool "RTD1296 peripheral clock gates"
+	depends on CLK && ARCH_REALTEK
+	help
+	  Manage the main and isolation clock gates with shared consumer references.
+
 endmenu
