@@ -103,6 +103,45 @@
 };
 
 &{/soc@0} {
+	pcie_sds: syscon@9801c600 {
+		compatible = "syscon";
+		reg = <0x9801c600 0x100>;
+	};
+
+	pcie0: pcie@9804e000 {
+		compatible = "realtek,rtd1296-pcie-gen1";
+		reg = <0x9804e000 0x1000>, <0x9804f000 0x800>;
+		device_type = "pci";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		bus-range = <0 0>;
+		ranges = <0x02000000 0 0xc0000000 0x9804f000 0 0x800>;
+		realtek,sds = <&pcie_sds>;
+		realtek,sb2 = <&sb2>;
+		power-domains = <&serdes_domain 0>;
+		clocks = <&crt_gates 1>;
+		resets = <&reset2 6>, <&reset2 8>, <&reset2 13>,
+			 <&reset2 14>, <&reset2 15>, <&reset2 7>, <&reset4 13>;
+		status = "disabled";
+	};
+
+	pcie1: pcie@9803b000 {
+		compatible = "realtek,rtd1296-pcie-gen2";
+		reg = <0x9803b000 0x1000>, <0x9803c000 0x800>;
+		device_type = "pci";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		bus-range = <1 1>;
+		ranges = <0x02000000 0 0xc1000000 0x9803c000 0 0x800>;
+		realtek,sds = <&pcie_sds>;
+		realtek,sb2 = <&sb2>;
+		power-domains = <&serdes_domain 0>;
+		clocks = <&crt_gates 37>;
+		resets = <&reset2 19>, <&reset2 17>, <&reset2 20>,
+			 <&reset2 21>, <&reset2 22>, <&reset2 16>, <&reset4 14>;
+		status = "disabled";
+	};
+
 	serdes_domain: power-domain-serdes {
 		compatible = "realtek,rtd1296-reset-domain";
 		#power-domain-cells = <1>;

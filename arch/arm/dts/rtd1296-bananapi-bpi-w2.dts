@@ -15,6 +15,8 @@
 		ethernet0 = &gmac;
 		mmc0 = &emmc;
 		mmc1 = &sd;
+		pci0 = &pcie0;
+		pci1 = &pcie1;
 	};
 
 	chosen {
@@ -113,9 +115,31 @@
 &cpu3 { enable-method = "psci"; };
 
 &pinctrl {
+	pcie0_reset_pins: pcie0-reset-pins {
+		pinctrl-single,bits = <0xc 0 0xc0000000>;
+	};
+
+	pcie1_reset_pins: pcie1-reset-pins {
+		pinctrl-single,bits = <0xc 0 0x03000000>;
+	};
+
 	fan_pins: fan-pins {
 		pinctrl-single,bits = <0xc 0 0x00030000>;
 	};
+};
+
+&pcie0 {
+	status = "okay";
+	reset-gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie0_reset_pins>;
+};
+
+&pcie1 {
+	status = "okay";
+	reset-gpios = <&gpio 19 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie1_reset_pins>;
 };
 
 &sfc {
