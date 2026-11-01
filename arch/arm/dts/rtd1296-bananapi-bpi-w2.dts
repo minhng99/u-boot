@@ -1,0 +1,85 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+/dts-v1/;
+
+#include <arm64/realtek/rtd1296.dtsi>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "Banana Pi BPI-W2";
+	compatible = "bananapi,bpi-w2", "realtek,rtd1296";
+
+	aliases {
+		serial0 = &uart0;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0 0x80000000>;
+	};
+
+	psci {
+		compatible = "arm,psci-1.0", "arm,psci-0.2";
+		method = "smc";
+	};
+
+	regulator-fan {
+		compatible = "regulator-fixed";
+		regulator-name = "fan-5v";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpios = <&gpio 15 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+		regulator-boot-on;
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pins>;
+	};
+};
+
+&{/reserved-memory} {
+	/delete-node/ rpc@1f000;
+	/delete-node/ rpc@1ffe000;
+	/delete-node/ tee@10100000;
+
+	bl31@10000000 {
+		reg = <0x10000000 0x40000>;
+		no-map;
+	};
+};
+
+&cpu0 { enable-method = "psci"; };
+&cpu1 { enable-method = "psci"; };
+&cpu2 { enable-method = "psci"; };
+&cpu3 { enable-method = "psci"; };
+
+&misc {
+	gpio: gpio@100 {
+		compatible = "realtek,rtd1296-gpio";
+		reg = <0x100 0x30>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+};
+
+&sb2 {
+	pinctrl: pinctrl@900 {
+		compatible = "pinctrl-single";
+		reg = <0x900 0x10>;
+		#pinctrl-cells = <1>;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <3>;
+		pinctrl-single,bit-per-mux;
+
+		fan_pins: fan-pins {
+			pinctrl-single,bits = <0xc 0 0x00030000>;
+		};
+	};
+};
+
+&uart0 {
+	status = "okay";
+};

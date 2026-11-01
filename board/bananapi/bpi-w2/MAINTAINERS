@@ -1,0 +1,9 @@
+BANANA PI BPI-W2
+M:	Nguyen Quang Minh <oss@minhng99.eu>
+S:	Maintained
+F:	arch/arm/dts/rtd1296-bananapi-bpi-w2*
+F:	arch/arm/mach-realtek/
+F:	board/bananapi/bpi-w2/
+F:	configs/bananapi_w2_defconfig
+F:	drivers/gpio/rtd1296-gpio.c
+F:	include/configs/bananapi_w2.h

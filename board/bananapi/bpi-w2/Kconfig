@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-2.0+
+if TARGET_BANANAPI_W2
+
+config SYS_BOARD
+	default "bpi-w2"
+
+config SYS_VENDOR
+	default "bananapi"
+
+config SYS_CONFIG_NAME
+	default "bananapi_w2"
+
+endif

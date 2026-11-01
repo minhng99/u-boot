@@ -1,0 +1,41 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+
+&uart0 {
+	bootph-all;
+};
+
+&osc27M {
+	bootph-all;
+};
+
+&reset1 {
+	compatible = "syscon-reset";
+	regmap = <&crt>;
+	offset = <0>;
+	mask = <0xffffffff>;
+	assert-high = <0>;
+};
+
+&reset2 {
+	compatible = "syscon-reset";
+	regmap = <&crt>;
+	offset = <4>;
+	mask = <0xffffffff>;
+	assert-high = <0>;
+};
+
+&reset4 {
+	compatible = "syscon-reset";
+	regmap = <&crt>;
+	offset = <0x50>;
+	mask = <0xffff>;
+	assert-high = <0>;
+};
+
+&iso_reset {
+	compatible = "syscon-reset";
+	regmap = <&iso>;
+	offset = <0x88>;
+	mask = <0xffffffff>;
+	assert-high = <0>;
+};

@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-2.0+
+if ARCH_REALTEK
+
+config TARGET_BANANAPI_W2
+	bool "Banana Pi BPI-W2"
+	default y
+	select DM_GPIO
+	select GPIO_RTD1296
+
+config SYS_SOC
+	default "rtd1296"
+
+config TEXT_BASE
+	default 0x00200000
+
+config SYS_MALLOC_F_LEN
+	default 0x4000
+
+source "board/bananapi/bpi-w2/Kconfig"
+
+endif
