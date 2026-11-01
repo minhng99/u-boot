@@ -30,6 +30,7 @@
 #define RTD_SATA_DATA	2048
 #define RTD_SATA_BUFFER	SZ_64K
 #define RTD_SATA_MEMORY	(RTD_SATA_DATA + RTD_SATA_BUFFER)
+#define RTD_SATA_READY_US	20000000
 
 struct rtd_sata_port {
 	struct phy phy;
@@ -294,7 +295,7 @@ static int rtd_sata_start(struct rtd_sata *priv, uint index)
 		return 0;
 	setbits_le32(regs + PORT_CMD, PORT_CMD_START);
 	ret = readl_poll_timeout(regs + PORT_TFDATA, status,
-				 !(status & (ATA_BUSY | ATA_DRQ)), 1000000);
+				 !(status & (ATA_BUSY | ATA_DRQ)), RTD_SATA_READY_US);
 	if (ret)
 		return ret;
 	if (ata_dev_classify(readl(regs + PORT_SIG)) != ATA_DEV_ATA)
