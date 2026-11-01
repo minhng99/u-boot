@@ -19,6 +19,15 @@
 };
 
 &iso {
+	iso_pinctrl: pinctrl@310 {
+		compatible = "pinctrl-single";
+		reg = <0x310 0x10>;
+		#pinctrl-cells = <1>;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <3>;
+		pinctrl-single,bit-per-mux;
+	};
+
 	iso_gates: clock-controller@8c {
 		compatible = "realtek,rtd1296-clk-gates";
 		reg = <0x8c 4>;
