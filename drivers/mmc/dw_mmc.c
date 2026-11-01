@@ -367,6 +367,9 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 	u32 mask;
 	struct bounce_buffer bbstate;
 
+	if ((cmd->resp_type & MMC_RSP_136) && (cmd->resp_type & MMC_RSP_BUSY))
+		return -EBUSY;
+
 	dwmci_wait_while_busy(host, cmd);
 	dwmci_writel(host, DWMCI_RINTSTS, DWMCI_INTMSK_ALL);
 
@@ -401,9 +404,6 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 
 	if (data)
 		flags = dwmci_set_transfer_mode(host, data);
-
-	if ((cmd->resp_type & MMC_RSP_136) && (cmd->resp_type & MMC_RSP_BUSY))
-		return -EBUSY;
 
 	if (cmd->cmdidx == MMC_CMD_STOP_TRANSMISSION)
 		flags |= DWMCI_CMD_ABORT_STOP;
@@ -444,7 +444,8 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 
 	if (i == retry) {
 		debug("%s: Timeout\n", __func__);
-		return -ETIMEDOUT;
+		ret = -ETIMEDOUT;
+		goto out;
 	}
 
 	if (mask & DWMCI_INTMSK_RTO) {
@@ -457,14 +458,17 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 		 * CMD8, please keep that in mind.
 		 */
 		debug("%s: Response Timeout\n", __func__);
-		return -ETIMEDOUT;
+		ret = -ETIMEDOUT;
+		goto out;
 	} else if (mask & DWMCI_INTMSK_RE) {
 		debug("%s: Response Error\n", __func__);
-		return -EIO;
+		ret = -EIO;
+		goto out;
 	} else if ((cmd->resp_type & MMC_RSP_CRC) &&
 		   (mask & DWMCI_INTMSK_RCRC)) {
 		debug("%s: Response CRC Error\n", __func__);
-		return -EIO;
+		ret = -EIO;
+		goto out;
 	}
 
 	if (cmd->resp_type & MMC_RSP_PRESENT) {
@@ -478,14 +482,14 @@ static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 		}
 	}
 
-	if (data) {
+	if (data)
 		ret = dwmci_data_transfer(host, data);
-		if (!host->fifo_mode) {
-			int dma_ret = dwmci_dma_transfer(host, data->flags, &bbstate);
+out:
+	if (data && !host->fifo_mode) {
+		int dma_ret = dwmci_dma_transfer(host, data->flags, &bbstate);
 
-			if (!ret)
-				ret = dma_ret;
-		}
+		if (!ret)
+			ret = dma_ret;
 	}
 
 	udelay(100);
