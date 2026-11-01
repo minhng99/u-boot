@@ -13,6 +13,7 @@ obj-y += rockchip/
 obj-y += socionext/
 obj-y += spacemit/
 obj-y += starfive/
+obj-$(CONFIG_PHY_RTD1296_SATA) += phy-rtd1296-sata.o
 obj-y += ti/
 
 obj-$(CONFIG_$(PHASE_)PHY) += phy-uclass.o

@@ -1,6 +1,16 @@
 
 menu "PHY Subsystem"
 
+config PHY_RTD1296_SATA
+	bool "RTD1296 SATA PHY"
+	depends on ARCH_REALTEK
+	select PHY
+	select CLK
+	select CLK_RTD1296
+	select RTD1296_RESET_DOMAIN
+	help
+	  Configure the two SATA PHY channels and their rate-dependent analog settings.
+
 config PHY
 	bool "PHY Core"
 	depends on DM
