@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0+
 #include <clk.h>
 #include <cpu_func.h>
+#include <cyclic.h>
 #include <dm.h>
+#include <led.h>
 #include <malloc.h>
 #include <miiphy.h>
 #include <net.h>
@@ -15,6 +17,7 @@
 #include <asm/unaligned.h>
 #include <dm/device_compat.h>
 #include <dm/read.h>
+#include <dm/uclass.h>
 #include <linux/delay.h>
 #include <linux/iopoll.h>
 #include <linux/ioport.h>
@@ -85,6 +88,13 @@ struct rtd_eth {
 	bool accessible;
 	bool running;
 	bool rx_held;
+	struct udevice *leds[2];
+	struct cyclic_info led_poll;
+	u32 traffic;
+	u32 sampled_traffic;
+	int led_state;
+	bool led_registered;
+	bool led_phase;
 };
 
 static int rtd_clocks_off(struct rtd_eth *priv)
@@ -219,6 +229,104 @@ static int rtd_mdio_write(struct mii_dev *bus, int addr, int devad, int reg,
 				 !(status & GMAC_MDIO_FLAG), 50000);
 }
 
+enum rtd_led_state {
+	RTD_LED_OFF,
+	RTD_LED_LINK,
+	RTD_LED_ACTIVITY,
+};
+
+static int rtd_led_set(struct rtd_eth *priv, enum rtd_led_state state)
+{
+	int ret;
+
+	if (priv->led_state == state)
+		return 0;
+	priv->led_state = -1;
+	for (uint i = 0; i < ARRAY_SIZE(priv->leds); i++) {
+		if (!priv->leds[i])
+			continue;
+		ret = led_set_state(priv->leds[i], LEDST_OFF);
+		if (ret)
+			return ret;
+	}
+	if (state != RTD_LED_OFF && priv->leds[state - 1]) {
+		ret = led_set_state(priv->leds[state - 1], LEDST_ON);
+		if (ret)
+			return ret;
+	}
+	priv->led_state = state;
+	return 0;
+}
+
+static void rtd_led_poll(struct cyclic_info *cyclic)
+{
+	struct rtd_eth *priv = container_of(cyclic, struct rtd_eth, led_poll);
+	enum rtd_led_state state = RTD_LED_OFF;
+
+	if (priv->accessible && (readb(priv->regs + GMAC_PHY_STATUS) & BIT(1))) {
+		if (priv->traffic != priv->sampled_traffic) {
+			priv->led_phase = !priv->led_phase;
+			state = priv->led_phase ? RTD_LED_ACTIVITY : RTD_LED_LINK;
+		} else {
+			priv->led_phase = false;
+			state = RTD_LED_LINK;
+		}
+	} else {
+		priv->led_phase = false;
+	}
+	priv->sampled_traffic = priv->traffic;
+	rtd_led_set(priv, state);
+}
+
+static int rtd_leds_init(struct udevice *dev)
+{
+	static const char * const properties[] = {
+		"u-boot,link-led", "u-boot,activity-led",
+	};
+	struct rtd_eth *priv = dev_get_priv(dev);
+	struct udevice *led;
+	int ret;
+
+	if (!CONFIG_IS_ENABLED(LED) || !CONFIG_IS_ENABLED(CYCLIC))
+		return 0;
+	for (uint i = 0; i < ARRAY_SIZE(properties); i++) {
+		if (!dev_read_prop(dev, properties[i], NULL))
+			continue;
+		ret = uclass_get_device_by_phandle(UCLASS_LED, dev, properties[i], &led);
+		if (ret)
+			return ret;
+		priv->leds[i] = led;
+	}
+	if (!priv->leds[0] && !priv->leds[1])
+		return 0;
+	if (priv->leds[0] == priv->leds[1])
+		return -EINVAL;
+	priv->led_state = -1;
+	ret = rtd_led_set(priv, RTD_LED_OFF);
+	if (ret)
+		return ret;
+	cyclic_register(&priv->led_poll, rtd_led_poll, 100000, dev->name);
+	priv->led_registered = true;
+	return 0;
+}
+
+static void rtd_led_activity(struct rtd_eth *priv)
+{
+	if (CONFIG_IS_ENABLED(LED) && CONFIG_IS_ENABLED(CYCLIC))
+		priv->traffic++;
+}
+
+static void rtd_leds_exit(struct rtd_eth *priv)
+{
+	if (!CONFIG_IS_ENABLED(LED) || !CONFIG_IS_ENABLED(CYCLIC))
+		return;
+	if (priv->led_registered) {
+		cyclic_unregister(&priv->led_poll);
+		priv->led_registered = false;
+	}
+	rtd_led_set(priv, RTD_LED_OFF);
+}
+
 static void rtd_rx_recycle(struct rtd_eth *priv)
 {
 	u8 *buffer = priv->rx_buffers + priv->rx_index * RTD_BUFFER_SIZE;
@@ -334,6 +442,7 @@ static int rtd_send(struct udevice *dev, void *packet, int length)
 	struct rtd_eth *priv = dev_get_priv(dev);
 	u32 status;
 	uint size;
+	int ret;
 
 	if (!priv->running)
 		return -ENETDOWN;
@@ -353,8 +462,11 @@ static int rtd_send(struct udevice *dev, void *packet, int length)
 	/* The descriptor must reach memory before the polling request. */
 	mb();
 	writeb(BIT(6), priv->regs + GMAC_TX_POLL);
-	return readl_poll_timeout(&priv->tx->status, status,
+	ret = readl_poll_timeout(&priv->tx->status, status,
 				 !(status & DESC_OWN), 1000000);
+	if (!ret)
+		rtd_led_activity(priv);
+	return ret;
 }
 
 static int rtd_recv(struct udevice *dev, int flags, uchar **packetp)
@@ -383,6 +495,7 @@ static int rtd_recv(struct udevice *dev, int flags, uchar **packetp)
 		invalidate_dcache_range((ulong)buffer, (ulong)buffer + RTD_BUFFER_SIZE);
 		*packetp = buffer;
 		priv->rx_held = true;
+		rtd_led_activity(priv);
 		return length - ETH_FCS_LEN;
 	}
 	return -EAGAIN;
@@ -479,6 +592,9 @@ static int rtd_eth_probe(struct udevice *dev)
 	}
 	priv->tx = plat->rings;
 	priv->rx = plat->rings + RTD_RING_ALIGN;
+	ret = rtd_leds_init(dev);
+	if (ret)
+		dev_warn(dev, "LED setup failed: %d\n", ret);
 	return 0;
 
 free_phy:
@@ -497,6 +613,7 @@ static int rtd_eth_remove(struct udevice *dev)
 	struct rtd_eth *priv = dev_get_priv(dev);
 	int ret;
 
+	rtd_leds_exit(priv);
 	priv->running = false;
 	if (priv->accessible) {
 		ret = rtd_mac_reset(priv);
