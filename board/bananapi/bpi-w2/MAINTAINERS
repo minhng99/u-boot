@@ -17,4 +17,5 @@ F:	drivers/ata/rtd1296-sata.c
 F:	drivers/phy/phy-rtd1296-sata.c
 F:	arch/arm/include/asm/arch-rtd1296/
 F:	drivers/pci/pcie-rtd1296.c
+F:	drivers/nvme/nvme_rtd1296.c
 F:	include/configs/bananapi_w2.h

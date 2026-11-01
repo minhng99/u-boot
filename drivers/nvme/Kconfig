@@ -9,6 +9,13 @@ config NVME
 	  This option enables support for NVM Express devices.
 	  It supports basic functions of NVMe (read/write).
 
+config NVME_RTD1296
+	bool "NVMe devices on RTD1296 PCIe links"
+	depends on PCIE_RTD1296 && !NVME_PCI
+	select NVME
+	help
+	  Access PCI NVMe controllers through RTD1296 banked doorbells.
+
 config NVME_APPLE
 	bool "Apple NVMe controller support"
 	depends on ARCH_APPLE
