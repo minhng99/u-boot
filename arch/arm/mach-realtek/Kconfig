@@ -6,6 +6,7 @@ config TARGET_BANANAPI_W2
 	default y
 	select DM_GPIO
 	select GPIO_RTD1296
+	select DM_EVENT if SPI_FLASH_MTD
 
 config SYS_SOC
 	default "rtd1296"
