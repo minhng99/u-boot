@@ -1,6 +1,37 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
 #include <arm64/realtek/rtd1296.dtsi>
 
+/ {
+	emmc_input: clock-emmc {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <80000000>;
+	};
+};
+
+&rbus {
+	emmc: mmc@12000 {
+		compatible = "realtek,rtd1296-dw-mshc";
+		reg = <0x12000 0x600>;
+		realtek,crt = <&crt>;
+		clocks = <&emmc_input>, <&crt_gates 24>,
+			 <&crt_gates 25>, <&crt_gates 28>;
+		clock-names = "ciu", "card", "biu", "ip";
+		resets = <&reset2 11>;
+		reset-names = "emmc";
+		status = "disabled";
+	};
+
+	cr_pinctrl: pinctrl@12600 {
+		compatible = "pinctrl-single";
+		reg = <0x12600 0x40>;
+		#pinctrl-cells = <1>;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <3>;
+		pinctrl-single,bit-per-mux;
+	};
+};
+
 &crt {
 	crt_gates: clock-controller@c {
 		compatible = "realtek,rtd1296-clk-gates";

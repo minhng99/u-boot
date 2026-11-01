@@ -13,6 +13,7 @@
 		serial0 = &uart0;
 		spi0 = &sfc;
 		ethernet0 = &gmac;
+		mmc0 = &emmc;
 	};
 
 	chosen {
@@ -135,5 +136,25 @@
 &iso_pinctrl {
 	gmac_led_pins: gmac-led-pins {
 		pinctrl-single,bits = <4 0 0x00330000>;
+	};
+};
+
+&emmc {
+	status = "okay";
+	bus-width = <8>;
+	max-frequency = <20000000>;
+	non-removable;
+	pinctrl-names = "default";
+	pinctrl-0 = <&emmc_pins>;
+};
+
+&cr_pinctrl {
+	emmc_pins: emmc-pins {
+		pinctrl-single,bits =
+			<0x00 0xaaaa0828 0xffff0c3c>,
+			<0x0c 0x33333333 0x33333333>,
+			<0x24 0x77777777 0x77777777>,
+			<0x28 0x77777777 0x77777777>,
+			<0x2c 0x77007700 0x77007700>;
 	};
 };
