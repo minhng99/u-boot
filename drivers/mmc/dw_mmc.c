@@ -362,7 +362,7 @@ static void dwmci_wait_while_busy(struct dwmci_host *host, struct mmc_cmd *cmd)
 static int dwmci_send_cmd_common(struct dwmci_host *host, struct mmc_cmd *cmd,
 				 struct mmc_data *data, void *cur_idmac)
 {
-	int ret, flags = 0, i;
+	int ret = 0, flags = 0, i;
 	u32 retry = 100000;
 	u32 mask;
 	struct bounce_buffer bbstate;
