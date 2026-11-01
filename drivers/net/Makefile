@@ -103,6 +103,7 @@ obj-$(CONFIG_RENESAS_ETHER_SWITCH) += rswitch.o
 obj-$(CONFIG_RENESAS_RAVB) += ravb.o
 obj-$(CONFIG_RTL8139) += rtl8139.o
 obj-$(CONFIG_RTL8169) += rtl8169.o
+obj-$(CONFIG_RTD1296_ETH) += rtd1296.o
 obj-$(CONFIG_SH_ETHER) += sh_eth.o
 obj-$(CONFIG_SJA1105) += sja1105.o
 obj-$(CONFIG_SMC911X) += smc911x.o
