@@ -17,6 +17,16 @@
 		reset-names = "domain";
 	};
 
+	sd: mmc@10400 {
+		compatible = "realtek,rtd1296-sdmmc";
+		reg = <0x10400 0x200>;
+		realtek,crt = <&crt>;
+		realtek,sb2 = <&sb2>;
+		clocks = <&crt_gates 25>, <&crt_gates 31>;
+		power-domains = <&cr_domain 0>;
+		status = "disabled";
+	};
+
 	emmc: mmc@12000 {
 		compatible = "realtek,rtd1296-dw-mshc";
 		reg = <0x12000 0x600>;
