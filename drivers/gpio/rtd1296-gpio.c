@@ -6,6 +6,7 @@
 #include <linux/ioport.h>
 
 struct rtd_gpio_bank {
+	const char *name;
 	u16 pins;
 	u8 stride;
 	u8 data_out;
@@ -95,12 +96,25 @@ static int rtd_gpio_probe(struct udevice *dev)
 	if (!priv->base)
 		return -EINVAL;
 	uc->gpio_count = priv->bank->pins;
-	uc->bank_name = dev->name;
+	uc->bank_name = priv->bank->name;
 	return 0;
 }
 
-static const struct rtd_gpio_bank rtd1296_gpio_bank = { 101, 4, 0x10, 0x20 };
-static const struct rtd_gpio_bank rtd1296_iso_bank = { 35, 0x18, 4, 8 };
+static const struct rtd_gpio_bank rtd1296_gpio_bank = {
+	.name = "GPIO",
+	.pins = 101,
+	.stride = 4,
+	.data_out = 0x10,
+	.data_in = 0x20,
+};
+
+static const struct rtd_gpio_bank rtd1296_iso_bank = {
+	.name = "ISO",
+	.pins = 35,
+	.stride = 0x18,
+	.data_out = 4,
+	.data_in = 8,
+};
 
 static const struct udevice_id rtd_gpio_ids[] = {
 	{ "realtek,rtd1296-gpio", (ulong)&rtd1296_gpio_bank },
