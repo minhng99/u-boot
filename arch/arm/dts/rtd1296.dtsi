@@ -10,6 +10,13 @@
 };
 
 &rbus {
+	cr_domain: power-domain-cr {
+		compatible = "realtek,rtd1296-reset-domain";
+		#power-domain-cells = <1>;
+		resets = <&reset2 10>;
+		reset-names = "domain";
+	};
+
 	emmc: mmc@12000 {
 		compatible = "realtek,rtd1296-dw-mshc";
 		reg = <0x12000 0x600>;
@@ -19,6 +26,7 @@
 		clock-names = "ciu", "card", "biu", "ip";
 		resets = <&reset2 11>;
 		reset-names = "emmc";
+		power-domains = <&cr_domain 0>;
 		status = "disabled";
 	};
 

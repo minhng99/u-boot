@@ -294,6 +294,7 @@ config MMC_DW_RTD1296
 	select MMC_DW
 	select CLK
 	select CLK_RTD1296
+	select RTD1296_RESET_DOMAIN
 	help
 	  Use the DesignWare core with the RTD1296 clock and pad interface.
 
