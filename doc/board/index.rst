@@ -52,6 +52,7 @@ Board-specific doc
    purism/index
    qualcomm/index
    qnap/index
+   realtek/index
    renesas/index
    rockchip/index
    samsung/index
