@@ -47,6 +47,29 @@ Each firmware slot contains a wrapped FIP with BL31 and BL33. The SPI
 controller retains the clock divider and sampling configuration established
 by boot firmware.
 
+Firmware updates
+----------------
+
+A slot image starts with a 64-byte legacy firmware image header, followed
+by the FIP payload and ``0xff`` padding to 4 MiB. Place ``u-boot.bin`` in
+the BL33 component of the FIP.
+
+Boot firmware tries ``uboot_a`` first. An invalid header or payload CRC
+causes it to try ``uboot_b``. Both recovery paths have been exercised.
+
+After loading a complete slot image at ``0x04000000``, verify its digest
+and update the primary slot::
+
+    hash sha256 0x04000000 0x400000
+    sf probe
+    sf update 0x04000000 0x40000 0x400000
+    sf read 0x08000000 0x40000 0x400000
+    cmp.b 0x04000000 0x08000000 0x400000
+
+Primary-slot programming, readback and relay cold boot have been
+validated. The recovery slot, boot firmware and environment retain their
+contents during this update.
+
 Environment
 -----------
 
@@ -98,8 +121,8 @@ The fan supply uses main GPIO 15 with active-high enable.
 Operating-system handoff
 ------------------------
 
-Board setup supplies PSCI CPU enable methods and marks the 256 KiB BL31
-region at ``0x10000000`` as ``no-map`` in the operating-system device tree.
+Board setup supplies PSCI CPU enable methods and adds a 256 KiB ``no-map``
+reservation at ``0x10000000`` for BL31 in the operating-system device tree.
 Four-core Linux boot, CPU hotplug and PSCI reset have been exercised.
 
 During removal, storage and USB controllers stop DMA before releasing
