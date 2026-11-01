@@ -43,6 +43,17 @@ config AHCI_PCI
 	help
 	  Enables support for the PCI-based AHCI controller.
 
+config SATA_RTD1296
+	bool "RTD1296 SATA controller"
+	depends on ARCH_REALTEK && DM
+	select AHCI
+	select SATA
+	select LIBATA
+	select PHY_RTD1296_SATA
+	select DM_REGULATOR
+	help
+	  Access SATA disks through the RTD1296 controller and native block interface.
+
 if AHCI
 
 config SPL_AHCI_PCI

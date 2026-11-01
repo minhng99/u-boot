@@ -17,3 +17,4 @@ obj-$(CONFIG_SATA_SIL) += sata_sil.o
 obj-$(CONFIG_AHCI_GENERIC) += ahci_generic.o
 obj-$(CONFIG_SUNXI_AHCI) += ahci_sunxi.o
 obj-$(CONFIG_MTK_AHCI) += mtk_ahci.o
+obj-$(CONFIG_SATA_RTD1296) += rtd1296-sata.o

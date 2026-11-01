@@ -13,5 +13,6 @@ F:	drivers/net/rtd1296.c
 F:	drivers/mmc/rtd1296-emmc.c
 F:	drivers/mmc/rtd1296-sd.c
 F:	drivers/power/domain/rtd1296-reset-domain.c
+F:	drivers/ata/rtd1296-sata.c
 F:	drivers/phy/phy-rtd1296-sata.c
 F:	include/configs/bananapi_w2.h
