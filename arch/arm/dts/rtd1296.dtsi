@@ -45,6 +45,18 @@
 };
 
 &{/soc@0} {
+	gmac: ethernet@98016000 {
+		compatible = "realtek,rtd1296-gmac";
+		reg = <0x98016000 0x1000>;
+		realtek,iso = <&iso>;
+		clocks = <&iso_gates 11>, <&iso_gates 12>;
+		clock-names = "250m", "sys";
+		resets = <&iso_reset 9>, <&iso_reset 10>;
+		reset-names = "gmac", "gphy";
+		phy-mode = "internal";
+		status = "disabled";
+	};
+
 	sfc: spi@9801a800 {
 		compatible = "realtek,rtd1296-sfc";
 		reg = <0x9801a800 0x30>, <0x88100000 0x1000000>;

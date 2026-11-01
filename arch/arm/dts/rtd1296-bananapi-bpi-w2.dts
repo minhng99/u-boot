@@ -11,6 +11,7 @@
 	aliases {
 		serial0 = &uart0;
 		spi0 = &sfc;
+		ethernet0 = &gmac;
 	};
 
 	chosen {
@@ -101,5 +102,9 @@
 };
 
 &uart0 {
+	status = "okay";
+};
+
+&gmac {
 	status = "okay";
 };
