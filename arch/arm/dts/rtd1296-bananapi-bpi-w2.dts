@@ -17,6 +17,10 @@
 		mmc1 = &sd;
 		pci0 = &pcie0;
 		pci1 = &pcie1;
+		usb0 = &ehci;
+		usb1 = &typec_host;
+		usb2 = &usb2_host;
+		usb3 = &usb3_host;
 	};
 
 	chosen {
@@ -73,6 +77,40 @@
 		startup-delay-us = <10000>;
 	};
 
+	usb2_supply: regulator-usb2 {
+		compatible = "regulator-fixed";
+		regulator-name = "usb2-vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		startup-delay-us = <100000>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&usb2_power_pins>;
+	};
+
+	usb3_supply: regulator-usb3 {
+		compatible = "regulator-fixed";
+		regulator-name = "usb3-vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		startup-delay-us = <100000>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&usb3_power_pins>;
+	};
+
+	typec_supply: regulator-typec {
+		compatible = "regulator-fixed";
+		regulator-name = "typec-vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpios = <&iso_gpio 1 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		startup-delay-us = <1000>;
+	};
+
 	sata0_supply: regulator-sata0 {
 		compatible = "regulator-fixed";
 		regulator-name = "sata0-5v";
@@ -115,6 +153,14 @@
 &cpu3 { enable-method = "psci"; };
 
 &pinctrl {
+	usb2_power_pins: usb2-power-pins {
+		pinctrl-single,bits = <0xc 0 0x0c000000>;
+	};
+
+	usb3_power_pins: usb3-power-pins {
+		pinctrl-single,bits = <0xc 0 0x00c00000>;
+	};
+
 	pcie0_reset_pins: pcie0-reset-pins {
 		pinctrl-single,bits = <0xc 0 0xc0000000>;
 	};
@@ -192,6 +238,10 @@
 };
 
 &iso_pinctrl {
+	typec_rd_pins: typec-rd-pins {
+		pinctrl-single,bits = <0xc 0 0x00003000>;
+	};
+
 	sata1_power_pins: sata1-power-pins {
 		pinctrl-single,bits = <0 0 0x00300000>;
 	};
@@ -263,4 +313,45 @@
 	vmmc-supply = <&sd_supply>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&sd_pins>;
+};
+
+&usb_bus {
+	status = "okay";
+};
+
+
+&typec {
+	vbus-supply = <&typec_supply>;
+	realtek,rd-ctrl-gpios = <&iso_gpio 34 GPIO_ACTIVE_HIGH>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&typec_rd_pins>;
+
+	connector {
+		compatible = "usb-c-connector";
+		power-role = "source";
+		data-role = "host";
+		typec-power-opmode = "default";
+		pd-disable;
+	};
+};
+
+&typec_host {
+	realtek,typec = <&typec>;
+};
+
+&ehci {
+	vbus-supply = <&usb2_supply>;
+};
+
+&usb3_phy {
+	realtek,amplitude-control-coarse-tuning = <0x24>;
+	realtek,amplitude-control-fine-tuning = <0x284a>;
+};
+
+&usb3_usb2_phy {
+	realtek,driving-level = <6>;
+};
+
+&usb3_host {
+	vbus-supply = <&usb3_supply>;
 };
