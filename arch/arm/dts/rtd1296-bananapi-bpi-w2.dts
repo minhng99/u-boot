@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
 /dts-v1/;
 
-#include <arm64/realtek/rtd1296.dtsi>
+#include "rtd1296.dtsi"
 #include <dt-bindings/gpio/gpio.h>
 
 / {
@@ -10,6 +10,7 @@
 
 	aliases {
 		serial0 = &uart0;
+		spi0 = &sfc;
 	};
 
 	chosen {
@@ -56,27 +57,19 @@
 &cpu2 { enable-method = "psci"; };
 &cpu3 { enable-method = "psci"; };
 
-&misc {
-	gpio: gpio@100 {
-		compatible = "realtek,rtd1296-gpio";
-		reg = <0x100 0x30>;
-		gpio-controller;
-		#gpio-cells = <2>;
+&pinctrl {
+	fan_pins: fan-pins {
+		pinctrl-single,bits = <0xc 0 0x00030000>;
 	};
 };
 
-&sb2 {
-	pinctrl: pinctrl@900 {
-		compatible = "pinctrl-single";
-		reg = <0x900 0x10>;
-		#pinctrl-cells = <1>;
-		pinctrl-single,register-width = <32>;
-		pinctrl-single,function-mask = <3>;
-		pinctrl-single,bit-per-mux;
+&sfc {
+	status = "okay";
 
-		fan_pins: fan-pins {
-			pinctrl-single,bits = <0xc 0 0x00030000>;
-		};
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
 	};
 };
 

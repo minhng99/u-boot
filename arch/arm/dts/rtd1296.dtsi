@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+#include <arm64/realtek/rtd1296.dtsi>
+
+&misc {
+	gpio: gpio@100 {
+		compatible = "realtek,rtd1296-gpio";
+		reg = <0x100 0x30>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+};
+
+&iso {
+	iso_gpio: gpio@100 {
+		compatible = "realtek,rtd1296-iso-gpio";
+		reg = <0x100 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+};
+
+&sb2 {
+	pinctrl: pinctrl@900 {
+		compatible = "pinctrl-single";
+		reg = <0x900 0x10>;
+		#pinctrl-cells = <1>;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <3>;
+		pinctrl-single,bit-per-mux;
+	};
+};
+
+&{/soc@0} {
+	sfc: spi@9801a800 {
+		compatible = "realtek,rtd1296-sfc";
+		reg = <0x9801a800 0x30>, <0x88100000 0x1000000>;
+		reg-names = "ctrl", "flash";
+		realtek,sb2 = <&sb2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "disabled";
+	};
+};
