@@ -103,6 +103,45 @@
 };
 
 &{/soc@0} {
+	serdes_domain: power-domain-serdes {
+		compatible = "realtek,rtd1296-reset-domain";
+		#power-domain-cells = <1>;
+		resets = <&reset2 31>;
+		reset-names = "domain";
+	};
+
+	sata_phy: phy@9803ff60 {
+		compatible = "realtek,rtd1296-sata-phy";
+		reg = <0x9803ff60 0x10>;
+		#phy-cells = <1>;
+		realtek,sb2 = <&sb2>;
+		power-domains = <&serdes_domain 0>;
+		clocks = <&crt_gates 7>, <&crt_gates 58>;
+		resets = <&reset1 10>, <&reset4 7>;
+		reset-names = "port0", "port1";
+		status = "disabled";
+	};
+
+	sata: sata@9803f000 {
+		compatible = "realtek,rtd1296-ahci";
+		reg = <0x9803f000 0x200>;
+		power-domains = <&serdes_domain 0>;
+		clocks = <&crt_gates 2>, <&crt_gates 57>;
+		resets = <&reset1 5>, <&reset1 7>, <&reset4 10>, <&reset4 9>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "disabled";
+	};
+
+	disp_pinctrl: pinctrl@9804d000 {
+		compatible = "pinctrl-single";
+		reg = <0x9804d000 0x10>;
+		#pinctrl-cells = <1>;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <3>;
+		pinctrl-single,bit-per-mux;
+	};
+
 	gmac: ethernet@98016000 {
 		compatible = "realtek,rtd1296-gmac";
 		reg = <0x98016000 0x1000>;
