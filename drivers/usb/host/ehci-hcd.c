@@ -1732,7 +1732,6 @@ int ehci_register(struct udevice *dev, struct ehci_hccr *hccr,
 done:
 	return 0;
 err:
-	free(ctrl);
 	debug("%s: failed, ret=%d\n", __func__, ret);
 	return ret;
 }
