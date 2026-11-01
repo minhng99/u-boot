@@ -766,6 +766,12 @@ config SPL_ADP5585_GPIO
 	help
 	  Support ADP5585 GPIO expander in SPL.
 
+config GPIO_RTD1296
+	bool "RTD1296 GPIO banks"
+	depends on DM_GPIO
+	help
+	  Control the main and isolation GPIO banks on RTD1296.
+
 config MPFS_GPIO
 	bool "Enable Polarfire SoC GPIO driver"
 	depends on DM_GPIO
