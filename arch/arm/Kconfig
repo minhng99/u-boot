@@ -1126,6 +1126,9 @@ config ARCH_REALTEK
 	select DM_SERIAL
 	select OF_CONTROL
 	imply CMD_DM
+	help
+	  Build RTD1296 platform support with AArch64 execution and
+	  device-model peripherals.
 
 config ARCH_RENESAS
 	bool "Renesas ARM SoCs"

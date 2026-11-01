@@ -7,6 +7,9 @@ config TARGET_BANANAPI_W2
 	select DM_GPIO
 	select GPIO_RTD1296
 	select DM_EVENT if SPI_FLASH_MTD
+	help
+	  Build support for the Banana Pi BPI-W2 board and its
+	  peripheral wiring.
 
 config SYS_SOC
 	default "rtd1296"

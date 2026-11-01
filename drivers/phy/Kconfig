@@ -7,7 +7,8 @@ config PHY_RTD1296_USB
 	select PHY
 	select DM_EVENT
 	help
-	  Configure USB2 viewport and USB3 MDIO PHYs through the generic PHY API.
+	  Configure USB2 viewport and USB3 MDIO PHYs through the
+	  generic PHY API.
 
 config PHY_RTD1296_SATA
 	bool "RTD1296 SATA PHY"
@@ -17,7 +18,8 @@ config PHY_RTD1296_SATA
 	select CLK_RTD1296
 	select RTD1296_RESET_DOMAIN
 	help
-	  Configure the two SATA PHY channels and their rate-dependent analog settings.
+	  Configure the two SATA PHY channels and their
+	  rate-dependent analog settings.
 
 config PHY
 	bool "PHY Core"

@@ -14,7 +14,8 @@ config NVME_RTD1296
 	depends on PCIE_RTD1296 && !NVME_PCI
 	select NVME
 	help
-	  Access PCI NVMe controllers through RTD1296 banked doorbells.
+	  Use the common NVMe command engine with banked PCIe doorbell
+	  access on RTD1296 hosts.
 
 config NVME_APPLE
 	bool "Apple NVMe controller support"

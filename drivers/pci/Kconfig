@@ -18,7 +18,8 @@ config PCIE_RTD1296
 	select CLK_RTD1296
 	select RTD1296_RESET_DOMAIN
 	help
-	  Support the RTD1296 point-to-point links with banked outbound apertures.
+	  Support the RTD1296 point-to-point PCIe links with
+	  banked outbound memory apertures.
 
 config DM_PCI_COMPAT
 	bool "Enable compatible functions for PCI"

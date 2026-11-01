@@ -26,7 +26,8 @@ config SPI_RTD1296
 	select SPI_MEM
 	select SYSCON
 	help
-	  Access serial NOR through the RTD1296 command and memory apertures.
+	  Access serial NOR through the RTD1296 command registers
+	  and memory-mapped flash aperture.
 
 config DM_SPI
 	bool "Enable Driver Model for SPI drivers"

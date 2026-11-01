@@ -718,7 +718,8 @@ config RTD1296_ETH
 	select PHYLIB
 	select PHY_GIGE
 	help
-	  Support the integrated MAC and its Clause 22 PHY on RTD1296.
+	  Use the RTD1296 integrated MAC and Clause 22 PHY with
+	  uncached descriptor and packet storage.
 
 config RTL8169
 	bool "Realtek 8169 series Ethernet controller driver"

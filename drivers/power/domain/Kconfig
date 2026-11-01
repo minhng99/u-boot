@@ -16,7 +16,8 @@ config RTD1296_RESET_DOMAIN
 	select DM_RESET
 	select DM_EVENT
 	help
-	  Keep shared peripheral resets released while any consumer is active.
+	  Keep shared peripheral resets released while any consumer is
+	  active, then assert them when the last user stops.
 
 config AGILEX5_PMGR_POWER_DOMAIN
 	bool "Enable the Agilex5 PMGR power domain driver"

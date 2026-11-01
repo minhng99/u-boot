@@ -306,6 +306,7 @@ config CLK_RTD1296
 	bool "RTD1296 peripheral clock gates"
 	depends on CLK && ARCH_REALTEK
 	help
-	  Manage the main and isolation clock gates with shared consumer references.
+	  Manage the main and isolation clock gates with shared
+	  consumer references for independently probed peripherals.
 
 endmenu

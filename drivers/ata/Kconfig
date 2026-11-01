@@ -52,7 +52,8 @@ config SATA_RTD1296
 	select PHY_RTD1296_SATA
 	select DM_REGULATOR
 	help
-	  Access SATA disks through the RTD1296 controller and native block interface.
+	  Access SATA disks through the RTD1296 controller and
+	  native block interface.
 
 if AHCI
 
