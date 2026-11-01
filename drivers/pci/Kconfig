@@ -11,6 +11,15 @@ menuconfig PCI
 
 if PCI
 
+config PCIE_RTD1296
+	bool "RTD1296 PCIe host controllers"
+	depends on ARCH_REALTEK && DM_GPIO && !PCI_PNP
+	select CLK
+	select CLK_RTD1296
+	select RTD1296_RESET_DOMAIN
+	help
+	  Support the RTD1296 point-to-point links with banked outbound apertures.
+
 config DM_PCI_COMPAT
 	bool "Enable compatible functions for PCI"
 	help

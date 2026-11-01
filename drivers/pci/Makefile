@@ -12,6 +12,7 @@ obj-$(CONFIG_X86) += pci_x86.o pci_rom.o
 obj-$(CONFIG_PCI) += pci_auto_common.o pci_common.o
 
 obj-$(CONFIG_PCIE_ECAM_GENERIC) += pcie_ecam_generic.o
+obj-$(CONFIG_PCIE_RTD1296) += pcie-rtd1296.o
 obj-$(CONFIG_PCIE_ECAM_SYNQUACER) += pcie_ecam_synquacer.o
 obj-$(CONFIG_PCIE_APPLE) += pcie_apple.o
 obj-$(CONFIG_PCIE_CDNS_TI) += pcie_cdns_ti.o
