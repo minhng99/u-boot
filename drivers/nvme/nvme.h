@@ -692,6 +692,8 @@ struct nvme_ops {
 	 * @cmd:   NVM Express command
 	 */
 	void (*complete_cmd)(struct nvme_queue *nvmeq, struct nvme_command *cmd);
+	/* Ring SQ/CQ doorbells through a transport-specific accessor. */
+	int (*ring_doorbell)(struct nvme_queue *nvmeq, bool completion, u16 value);
 };
 
 /**

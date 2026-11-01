@@ -155,16 +155,27 @@ static u16 nvme_read_completion_status(struct nvme_queue *nvmeq, u16 index)
 	return readw(&(nvmeq->cqes[index].status));
 }
 
+static int nvme_ring_doorbell(struct nvme_queue *nvmeq, bool completion, u16 value)
+{
+	const struct nvme_ops *ops = dev_get_driver_ops(nvmeq->dev->udev);
+
+	if (ops && ops->ring_doorbell)
+		return ops->ring_doorbell(nvmeq, completion, value);
+	writel(value, nvmeq->q_db + (completion ? nvmeq->dev->db_stride : 0));
+	return 0;
+}
+
 /**
  * nvme_submit_cmd() - copy a command into a queue and ring the doorbell
  *
  * @nvmeq:	The queue to use
  * @cmd:	The command to send
  */
-static void nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd)
+static int nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd)
 {
 	struct nvme_ops *ops;
 	u16 tail = nvmeq->sq_tail;
+	int ret;
 
 	memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
 	flush_dcache_range((ulong)&nvmeq->sq_cmds[tail],
@@ -173,13 +184,16 @@ static void nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd)
 	ops = (struct nvme_ops *)nvmeq->dev->udev->driver->ops;
 	if (ops && ops->submit_cmd) {
 		ops->submit_cmd(nvmeq, cmd);
-		return;
+		return 0;
 	}
 
 	if (++tail == nvmeq->q_depth)
 		tail = 0;
-	writel(tail, nvmeq->q_db);
+	ret = nvme_ring_doorbell(nvmeq, false, tail);
+	if (ret)
+		return ret;
 	nvmeq->sq_tail = tail;
+	return 0;
 }
 
 static int nvme_submit_sync_cmd(struct nvme_queue *nvmeq,
@@ -192,9 +206,12 @@ static int nvme_submit_sync_cmd(struct nvme_queue *nvmeq,
 	u16 status;
 	ulong start_time;
 	ulong timeout_us = timeout * 100000;
+	int ret;
 
 	cmd->common.command_id = nvme_get_cmd_id();
-	nvme_submit_cmd(nvmeq, cmd);
+	ret = nvme_submit_cmd(nvmeq, cmd);
+	if (ret)
+		return ret;
 
 	start_time = timer_get_us();
 
@@ -222,7 +239,9 @@ static int nvme_submit_sync_cmd(struct nvme_queue *nvmeq,
 			head = 0;
 			phase = !phase;
 		}
-		writel(head, nvmeq->q_db + nvmeq->dev->db_stride);
+		ret = nvme_ring_doorbell(nvmeq, true, head);
+		if (ret)
+			return ret;
 		nvmeq->cq_head = head;
 		nvmeq->cq_phase = phase;
 
@@ -236,7 +255,9 @@ static int nvme_submit_sync_cmd(struct nvme_queue *nvmeq,
 		head = 0;
 		phase = !phase;
 	}
-	writel(head, nvmeq->q_db + nvmeq->dev->db_stride);
+	ret = nvme_ring_doorbell(nvmeq, true, head);
+	if (ret)
+		return ret;
 	nvmeq->cq_head = head;
 	nvmeq->cq_phase = phase;
 
